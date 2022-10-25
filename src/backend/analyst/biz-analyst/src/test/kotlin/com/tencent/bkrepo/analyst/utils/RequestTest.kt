@@ -38,6 +38,8 @@ import com.tencent.bkrepo.analyst.NODE_SHA256
 import com.tencent.bkrepo.analyst.NODE_SIZE
 import com.tencent.bkrepo.analyst.PROJECT_ID
 import com.tencent.bkrepo.analyst.REPO
+import com.tencent.bkrepo.common.api.message.CommonMessageCode
+import com.tencent.bkrepo.common.api.pojo.Response
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -62,7 +64,7 @@ class RequestTest {
             NodeDetail::repoName.name to REPO,
             NodeDetail::name.name to NODE_NAME
         )
-        val response = ResponseBuilder.success(Pages.buildPage(listOf(node), 0, 1))
+        val response = Response(CommonMessageCode.SUCCESS.getCode(), null, Pages.buildPage(listOf(node), 0, 1), null)
 
         return mock {
             on { search(any()) }.doReturn(response)
