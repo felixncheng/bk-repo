@@ -85,6 +85,7 @@ jobs:
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
+          set -x
           version="$(basename $GITHUB_REF)"
           echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
           docker login --username chengmboy --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
