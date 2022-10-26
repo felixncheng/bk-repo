@@ -2,10 +2,8 @@ package com.tencent.bkrepo.git.internal.storage
 
 import org.eclipse.jgit.junit.TestRepository
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 
 class CodeRepositoryTest {
 

@@ -68,7 +68,6 @@ jobs:
           path: bkrepo-slim.tar.gz          
 
   cloudNative:
-    needs: [frontend]
     name: Build image and helm chart
     runs-on: ubuntu-latest
     steps:
@@ -87,8 +86,8 @@ jobs:
         working-directory: scripts
         run: |
           version="$(basename $GITHUB_REF)"
-          ./build-images.sh  -v $version --username=${{ secrets.DOCKER_USER }} \ 
-          --password=${{ secrets.DOCKER_PASS }} -r ${{ secrets.DOCKER_HOST }} -p
+          ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \ 
+          --password ${{ secrets.DOCKER_PASS }} -r ${{ secrets.DOCKER_HOST }} -p
       - name: Install Helm -- CLOUD NATIVE
         uses: azure/setup-helm@v1
         with:
