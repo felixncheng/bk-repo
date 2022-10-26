@@ -15,6 +15,7 @@ INIT=0
 VERSION=latest
 PUSH=0
 REGISTRY=docker.io
+NAMESPACE=bkrepo
 USERNAME=
 PASSWORD=
 BACKENDS=(repository auth generic oci helm npm pypi replication opdata)
@@ -38,6 +39,7 @@ usage () {
             [ -v, --version         [可选] 镜像版本tag, 默认latest ]
             [ -p, --push            [可选] 推送镜像到docker远程仓库，默认不推送 ]
             [ -r, --registry        [可选] docker仓库地址, 默认docker.io ]
+            [ -n, --namespace        [可选] docker仓库地址, 默认docker.io ]
             [ --username            [可选] docker仓库用户名 ]
             [ --password            [可选] docker仓库密码 ]
             [ -h, --help            [可选] 查看脚本帮助 ]
@@ -90,6 +92,10 @@ while (( $# > 0 )); do
             shift
             REGISTRY=$1
             ;;
+        -n | --namespace )
+            shift
+            NAMESPACE=$1
+            ;;
         --username )
             shift
             USERNAME=$1
@@ -137,9 +143,9 @@ if [[ $ALL -eq 1 || $GATEWAY -eq 1 ]] ; then
     cp -rf $IMAGE_DIR/gateway/startup.sh $tmp_dir/
     cp -rf $ROOT_DIR/scripts/render_tpl $tmp_dir/
     cp -rf $ROOT_DIR/support-files/templates $tmp_dir/
-    docker build -f $IMAGE_DIR/gateway/gateway.Dockerfile -t $REGISTRY/bkrepo/bkrepo-gateway:$VERSION $tmp_dir --network=host
+    docker build -f $IMAGE_DIR/gateway/gateway.Dockerfile -t $REGISTRY/$NAMESPACE/bkrepo-gateway:$VERSION $tmp_dir --network=host
     if [[ $PUSH -eq 1 ]] ; then
-        docker push $REGISTRY/bkrepo/bkrepo-gateway:$VERSION
+        docker push $REGISTRY/$NAMESPACE/bkrepo-gateway:$VERSION
     fi
 fi
 
@@ -152,9 +158,9 @@ if [[ $ALL -eq 1 || $BACKEND -eq 1 ]] ; then
         rm -rf $tmp_dir/*
         cp $IMAGE_DIR/backend/startup.sh $tmp_dir/
         cp $BACKEND_DIR/release/boot-$SERVICE.jar $tmp_dir/app.jar
-        docker build -f $IMAGE_DIR/backend/backend.Dockerfile -t $REGISTRY/bkrepo/bkrepo-$SERVICE:$VERSION $tmp_dir --network=host
+        docker build -f $IMAGE_DIR/backend/backend.Dockerfile -t $REGISTRY/$NAMESPACE/bkrepo-$SERVICE:$VERSION $tmp_dir --network=host
         if [[ $PUSH -eq 1 ]] ; then
-            docker push $REGISTRY/bkrepo/bkrepo-$SERVICE:$VERSION
+            docker push $REGISTRY/$NAMESPACE/bkrepo-$SERVICE:$VERSION
         fi
     done
     ls -a
@@ -167,9 +173,9 @@ if [[ $ALL -eq 1 || $INIT -eq 1 ]] ; then
     cp -rf $IMAGE_DIR/init/init-mongodb.sh $tmp_dir/
     cp -rf $ROOT_DIR/support-files/sql/init-data.js $tmp_dir/
     cp -rf $ROOT_DIR/support-files/sql/init-data-ext.js $tmp_dir/
-    docker build -f $IMAGE_DIR/init/init.Dockerfile -t $REGISTRY/bkrepo/bkrepo-init:$VERSION $tmp_dir --no-cache --network=host
+    docker build -f $IMAGE_DIR/init/init.Dockerfile -t $REGISTRY/$NAMESPACE/bkrepo-init:$VERSION $tmp_dir --no-cache --network=host
     if [[ $PUSH -eq 1 ]] ; then
-        docker push $REGISTRY/bkrepo/bkrepo-init:$VERSION
+        docker push $REGISTRY/$NAMESPACE/bkrepo-init:$VERSION
     fi
 fi
 echo "BUILD SUCCESSFUL!"

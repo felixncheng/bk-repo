@@ -87,7 +87,8 @@ jobs:
         run: |
           version="$(basename $GITHUB_REF)"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
-          --password ${{ secrets.DOCKER_PASS }} -r ${{ secrets.DOCKER_HOST }} -p
+          --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
+          -r ${{ secrets.DOCKER_HOST }} -p
       - name: Install Helm -- CLOUD NATIVE
         uses: azure/setup-helm@v1
         with:
