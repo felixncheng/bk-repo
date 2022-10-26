@@ -82,14 +82,12 @@ jobs:
           cache-read-only: false
       - name: Setup Docker -- CLOUD NATIVE
         uses: docker-practice/actions-setup-docker@master
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
           version="$(basename $GITHUB_REF)"
           echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
-          docker login --username ${{ secrets.DOCKER_USER }} --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
+          docker login --username chengmboy --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
           docker pull hello-world
           docker tag hello-world  docker.io/chengmboy/hello-world:1.0.1
           docker push docker.io/chengmboy/hello-world:1.0.1
