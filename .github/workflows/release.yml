@@ -50,7 +50,7 @@ jobs:
       - name: Gradle Build Backend Service
         working-directory: src/backend
         run: |
-          ./gradlew clean build
+          ./gradlew clean build -x test
       - name: Create artifact - Step1:get Frontend
         uses: actions/download-artifact@v1
         with:
