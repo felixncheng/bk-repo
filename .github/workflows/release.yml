@@ -88,7 +88,7 @@ jobs:
           version="$(basename $GITHUB_REF)"
           echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
-          --password ${{ secrets.DOCKER_PASS }} -r ${{ secrets.DOCKER_HOST }} -p
+          --password ${{ secrets.DOCKER_PASS }} -r docker.io/chengmboy -p
       - name: Install Helm -- CLOUD NATIVE
         uses: azure/setup-helm@v1
         with:
