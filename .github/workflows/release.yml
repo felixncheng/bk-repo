@@ -87,11 +87,15 @@ jobs:
         run: |
           set -x
           version="$(basename $GITHUB_REF)"
-          echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
+          cat ~/.docker/config.json
+          echo ==========
+          cat /home/runner/.docker
+          echo -------------
           docker login --username chengmboy --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
           docker pull hello-world
           docker tag hello-world  docker.io/chengmboy/hello-world:1.0.1
           docker push docker.io/chengmboy/hello-world:1.0.1
+          echo ++++++++++++
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -r docker.io/chengmboy -p
       - name: Install Helm -- CLOUD NATIVE
