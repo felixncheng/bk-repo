@@ -82,6 +82,8 @@ jobs:
           cache-read-only: false
       - name: Setup Docker -- CLOUD NATIVE
         uses: docker-practice/actions-setup-docker@master
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
