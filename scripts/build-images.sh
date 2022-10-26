@@ -2,7 +2,7 @@
 # 用途：构建并推送docker镜像
 
 # 安全模式
-set -euo pipefail
+set -xeuo pipefail
 
 # 通用脚本框架变量
 PROGRAM=$(basename "$0")
