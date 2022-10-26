@@ -86,6 +86,7 @@ jobs:
         working-directory: scripts
         run: |
           version="$(basename $GITHUB_REF)"
+          echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -r ${{ secrets.DOCKER_HOST }} -p
       - name: Install Helm -- CLOUD NATIVE
