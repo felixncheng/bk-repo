@@ -87,7 +87,7 @@ jobs:
         run: |
           version="$(basename $GITHUB_REF)"
           echo ${{secrets.DOCKER_HOST}} | sed 's/./& /g'
-          docker login --username $USERNAME --password $PASSWORD $REGISTRY
+          docker login --username ${{ secrets.DOCKER_USER }} --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
           docker pull hello-world
           docker tag hello-world  docker.io/chengmboy/hello-world:1.0.1
           docker push docker.io/chengmboy/hello-world:1.0.1
