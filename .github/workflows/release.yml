@@ -89,7 +89,7 @@ jobs:
           version="$(basename $GITHUB_REF)"
           cat ~/.docker/config.json
           echo ==========
-          docker login --username chengmboy --password ${{ secrets.DOCKER_PASS }} docker.io/chengmboy
+          docker login --username chengmboy --password ${{ secrets.DOCKER_PASS }} docker.io
           cat /home/runner/.docker/config.json
           echo -------------
           docker pull hello-world
