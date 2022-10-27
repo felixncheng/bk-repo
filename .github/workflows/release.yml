@@ -80,6 +80,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           cache-read-only: false
+      - name: download bkrepo
+        uses: actions/download-artifact@v1
+        with:
+          name: bkrepo
+          path: ~/
       - name: Setup Docker -- CLOUD NATIVE
         uses: docker-practice/actions-setup-docker@master
       - name: Create Docker Image -- CLOUD NATIVE
@@ -88,7 +93,7 @@ jobs:
           version="$(basename $GITHUB_REF)"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
-          -r ${{ secrets.DOCKER_HOST }} -p
+          -r ${{ secrets.DOCKER_HOST }} --slim-package-path ~/bkrepo-slim.tar.gz -p
       - name: Install Helm -- CLOUD NATIVE
         uses: azure/setup-helm@v1
         with:
