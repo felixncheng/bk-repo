@@ -80,11 +80,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           cache-read-only: false
-      - name: download bkrepo
-        uses: actions/download-artifact@v1
-        with:
-          name: bkrepo
-          path: ~/
       - name: Setup Docker -- CLOUD NATIVE
         uses: docker-practice/actions-setup-docker@master
       - name: Create Docker Image -- CLOUD NATIVE
@@ -93,7 +88,7 @@ jobs:
           version="$(basename $GITHUB_REF)"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
-          -r ${{ secrets.DOCKER_HOST }} --slim-package-path ~/bkrepo-slim.tar.gz -p
+          -r ${{ secrets.DOCKER_HOST }} -p
       - name: Install Helm -- CLOUD NATIVE
         uses: azure/setup-helm@v1
         with:
@@ -108,6 +103,26 @@ jobs:
         with:
           name: bkrepo-chart
           path: support-files/kubernetes/charts/bkrepo-charts.tgz
+
+  quickStart:
+    needs: [backend]
+    name: Build all in one image
+    runs-on: ubuntu-latest
+    steps:
+      - name: download bkrepo
+        uses: actions/download-artifact@v1
+        with:
+          name: bkrepo
+          path: ~/
+      - name: Setup Docker
+        uses: docker-practice/actions-setup-docker@master
+      - name: Create Docker Image
+        working-directory: scripts
+        run: |
+          version="$(basename $GITHUB_REF)"
+          ./build-images.sh --all-in-one -v $version --username ${{ secrets.DOCKER_USER }} \
+          --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
+          -r ${{ secrets.DOCKER_HOST }} --slim-package-path ~/bkrepo-slim.tar.gz -p
 
   releaseAll:
     name: Release All
