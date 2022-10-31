@@ -38,8 +38,8 @@ pluginManagement {
             maven(url = "https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
             maven(url = "https://mirrors.tencent.com/nexus/repository/maven-public")
         } else {
-            gradlePluginPortal()
             mavenCentral()
+            gradlePluginPortal()
         }
         maven(url = "https://repo.spring.io/milestone")
     }
