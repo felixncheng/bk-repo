@@ -52,8 +52,7 @@ jobs:
           -PallJarPassword='${{ secrets.SONATYPE_PASSWORD }}' \
           -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} \
           -Psigning.password='${{ secrets.SIGNING_PASSWORD }}' \
-          -Psigning.secretKeyRingFile=${{ github.workspace }}/secretKeyRingFile.gpg \
-          --refresh-dependencies --stacktrace --debug
+          -Psigning.signingKey=${{ github.workspace }}/secretKeyRingFile.gpg
       - name: Clean Up
         if: ${{ always() }}
         working-directory:
