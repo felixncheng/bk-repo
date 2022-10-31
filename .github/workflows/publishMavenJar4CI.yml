@@ -46,6 +46,7 @@ jobs:
           echo "GITHUB_REF=${GITHUB_REF}"
           repo_version=${GITHUB_REF##*/v}
           echo "repo_version=${repo_version}"
+          cat ${{ github.workspace }}/secretKeyRingFile.gpg
           ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
           -PallJarRepo="https://oss.sonatype.org/service/local/staging/deploy/maven2/" \
           -PallJarUsername=${{ secrets.SONATYPE_USERNAME }} \
