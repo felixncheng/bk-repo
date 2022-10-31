@@ -40,7 +40,7 @@ pluginManagement {
         } else {
             mavenCentral()
             maven(url = "https://repo.spring.io/milestone")
-            gradlePluginPortal()
+//            gradlePluginPortal()
         }
     }
 }
