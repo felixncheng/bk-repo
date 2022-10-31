@@ -42,15 +42,14 @@ jobs:
         working-directory:
       - name: Gradle Build
         working-directory: src/backend
-        env:
-          build_mavenRepoDeployUrl: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-          build_mavenRepoUsername: ${{ secrets.SONATYPE_USERNAME }}
-          build_mavenRepoPassword: ${{ secrets.SONATYPE_PASSWORD }}
         run: |
           echo "GITHUB_REF=${GITHUB_REF}"
           repo_version=${GITHUB_REF##*/v}
           echo "repo_version=${repo_version}"
-          ./gradlew publish -Drepo_version=${repo_version} \
+          ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
+          -PallJarRepo="https://oss.sonatype.org/service/local/staging/deploy/maven2/" \
+          -PallJarUsername=${{ secrets.SONATYPE_USERNAME }} \
+          -PallJarPassword='${{ secrets.SONATYPE_PASSWORD }}' \
           -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} \
           -Psigning.password='${{ secrets.SIGNING_PASSWORD }}' \
           -Psigning.secretKeyRingFile=${{ github.workspace }}/secretKeyRingFile.gpg
