@@ -60,4 +60,9 @@ object Versions {
     const val Mockk = "1.12.2"
     const val Swagger = "1.6.2"
     const val SleuthOtel = "1.0.0-M13"
+    const val Grpc= "1.39.0"
+    const val Protobuf="3.19.2"
+    const val GrpcKotlin="1.2.1"
+    const val Grpc_Kotlin_CoroutinesVersion="1.5.2"
+    const val ProtobufPluginVersion="0.8.18"
 }

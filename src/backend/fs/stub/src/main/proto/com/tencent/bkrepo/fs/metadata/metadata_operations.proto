@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.tencent.bkrepo.fs.metadata";
+option java_outer_classname = "Metadata";
+
+package fs.metadata;
+
+service MetadataService{
+
+  rpc GetNode(GetNodeRequest) returns (Node);
+  rpc ListNodes(ListNodesRequest) returns (Nodes);
+}
+
+message Node{
+  string lastModifiedDate = 1;
+  bool folder = 2;
+  string name = 3;
+  string fullPath = 4;
+  optional string md5 = 5;
+  optional string sha256 = 6;
+  int64 size = 7;
+}
+
+message Nodes{
+  repeated Node nodes = 1;
+}
+
+message GetNodeRequest{
+  string fullPath = 1;
+  string projectId = 2;
+  string repoName = 3;
+}
+
+message ListNodesRequest{
+  string path = 1;
+  int32 pageSize = 2;
+  bool includeFolder = 3;
+  bool includeMetadata = 4;
+  bool deep = 5;
+  bool sort = 6;
+  string projectId = 7;
+  string repoName = 8;
+}
