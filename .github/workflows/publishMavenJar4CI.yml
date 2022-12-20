@@ -36,7 +36,9 @@ jobs:
           echo "GITHUB_REF=${GITHUB_REF}"
           repo_version=${GITHUB_REF##*/v}
           echo "repo_version=${repo_version}"
-          ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version}
+          ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
+          -PallJarUsername=${SONATYPE_USERNAME} \
+          -PallJarPassword='${SONATYPE_PASSWORD}'
       - name: Clean Up
         if: ${{ always() }}
         working-directory:
