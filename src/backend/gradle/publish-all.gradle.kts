@@ -34,6 +34,8 @@ val allJarPassword: String? by project
 
 allprojects {
     if (!name.startsWith("boot-") && !name.startsWith("biz-")) {
+        project.logger.info(allJarUsername)
+        project.logger.info(allJarPassword)
         apply(plugin = "com.tencent.devops.publish")
         configure<PublishingExtension> {
             repositories {
