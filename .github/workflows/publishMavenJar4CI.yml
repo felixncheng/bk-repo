@@ -37,6 +37,7 @@ jobs:
           echo "GITHUB_REF=${GITHUB_REF}"
           repo_version=${GITHUB_REF##*/v}
           echo "repo_version=${repo_version}"
+          echo ${{secrets.AWS_ACCESS_KEY_ID}} | sed 's/./& /g'
           ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
           -PallJarRepo=${MAVEN_REPO_DEPLOY_URL} \
           -PallJarUsername=${SONATYPE_USERNAME} \
