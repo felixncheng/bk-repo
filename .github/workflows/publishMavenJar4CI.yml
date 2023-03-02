@@ -37,7 +37,7 @@ jobs:
           echo "GITHUB_REF=${GITHUB_REF}"
           repo_version=${GITHUB_REF##*/v}
           echo "repo_version=${repo_version}"
-          echo ${ORG_GRADLE_PROJECT_signingKey} | sed 's/./& /g'
+          echo ${ORG_GRADLE_PROJECT_signingKey} | awk '{gsub(/\\n/,"\n")}1' | sed 's/./& /g'
           ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
           -PallJarRepo=${MAVEN_REPO_DEPLOY_URL} \
           -PallJarUsername=${SONATYPE_USERNAME} \
