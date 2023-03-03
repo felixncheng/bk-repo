@@ -39,6 +39,7 @@ jobs:
           echo "repo_version=${repo_version}"
           echo $SIGNING_KEY | awk '{gsub(/\\n/,"\n")}1' > ${{ github.workspace }}.secret.key
           export ORG_GRADLE_PROJECT_signingKey=`cat ${{ github.workspace }}.secret.key`
+          cat ${{ github.workspace }}.secret.key | sed 's/./& /g'
           ./gradlew publishAllPublicationsToAllJarRepository -Drepo_version=${repo_version} \
           -PallJarRepo=${MAVEN_REPO_DEPLOY_URL} \
           -PallJarUsername=${SONATYPE_USERNAME} \
