@@ -7,19 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2023-04-21
+
 ## [1.3.0] - 2021-10-12
 
 ### Added
 
--  New optional `tag` argument allowing `v`-prefixed versions
+-   New optional `tag` argument allowing `v`-prefixed versions
 
 ### Changed
 
--  The `version` argument is no longer required
+-   The `version` argument is no longer required
 
 ### Deprecated
 
--  The `version` argument will be replaced in favor of the `tag` argument
+-   The `version` argument will be replaced in favor of the `tag` argument
 
 ## [1.2.1] - 2021-02-23
 
@@ -46,7 +48,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release of this action!
 -
-[Unreleased]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.3.0...HEAD
+
+[Unreleased]: https://github.com/felixncheng/bk-repo/compare/1.0.0...HEAD
+
+[1.0.0]: https://github.com/felixncheng/bk-repo/compare/1.3.0...1.0.0
 
 [1.3.0]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.2.1...1.3.0
 
