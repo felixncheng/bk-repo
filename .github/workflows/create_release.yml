@@ -32,7 +32,7 @@ jobs:
           git commit --message "Prepare release ${{ github.event.inputs.versionName }}"
           echo "::set-output name=commit::$(git rev-parse HEAD)"
       - name: Push new branch
-        run: git push origin release/v${{ github.event.inputs.versionName }}
+        run: git push origin release-${{ github.event.inputs.versionName }}
       - name: Create pull request into master
         uses: thomaseizinger/create-pull-request@1.0.0
         with:
