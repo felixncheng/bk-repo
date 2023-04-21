@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           head: release-${{ github.event.inputs.versionName }}
           base: master
-          title: v${{ github.event.inputs.versionName }} into master
+          title: release-${{ github.event.inputs.versionName }} into master
           reviewers: ${{ github.event.issue.user.login }}
           body: |
             Hi!
