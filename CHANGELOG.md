@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.5] - 2023-04-23
+
 ## [2.0.4] - 2023-04-23
 
 ## [1.0.4] - 2023-04-21
@@ -57,7 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Initial release of this action!
 -
 
-[Unreleased]: https://github.com/felixncheng/bk-repo/compare/2.0.4...HEAD
+[Unreleased]: https://github.com/felixncheng/bk-repo/compare/2.0.5...HEAD
+
+[2.0.5]: https://github.com/felixncheng/bk-repo/compare/2.0.4...2.0.5
 
 [2.0.4]: https://github.com/felixncheng/bk-repo/compare/1.0.4...2.0.4
 
