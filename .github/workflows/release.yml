@@ -30,6 +30,12 @@ jobs:
 
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Initialize mandatory git config
+        run: |
+          git config user.name "BkRepo Project Bot"
+          git config user.email "bkrepo-project-bot@users.noreply.github.com"
       - name: Create git tag
         run: git tag v${{ env.RELEASE_VERSION }}
       - name: Push git tag
@@ -40,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -68,6 +76,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -88,8 +98,7 @@ jobs:
       - name: Create artifact - Step2:make package
         id: create-artifact
         run: |
-          version="$(basename ${GITHUB_REF##*/v})"
-          echo "::set-output name=version::$version"
+          version="${{ env.RELEASE_VERSION }})"
           ci_pkg_dir=/dev/shm/bkrepo ./scripts/packager-repo.sh "$version" bkrepo-slim.tar.gz
       - uses: actions/upload-artifact@v1
         with:
@@ -102,6 +111,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -115,7 +126,7 @@ jobs:
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
-          version="$(basename ${GITHUB_REF##*/v})"
+          version="${{ env.RELEASE_VERSION }}"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} -p
@@ -126,7 +137,7 @@ jobs:
       - name: Package Helm Chart -- CLOUD NATIVE
         working-directory: support-files/kubernetes/charts
         run: |
-          version="$(basename ${GITHUB_REF##*/v})"
+          version="${{ env.RELEASE_VERSION }}"
           ./build.sh --version $version --app-version $version
           mv bkrepo-$version.tgz bkrepo-charts.tgz
       - uses: actions/upload-artifact@v1
@@ -134,12 +145,14 @@ jobs:
           name: bkrepo-chart
           path: support-files/kubernetes/charts/bkrepo-charts.tgz
 
-  quickStart:
+  quick-start:
     needs: [backend]
     name: Build all in one image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
       - name: download bkrepo
         uses: actions/download-artifact@v1
         id: download
@@ -151,7 +164,7 @@ jobs:
       - name: Create Docker Image
         working-directory: scripts
         run: |
-          version="$(basename ${GITHUB_REF##*/v})"
+          version="${{ env.RELEASE_VERSION }}"
           ./build-images.sh --all-in-one -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} --slim-package-path ../bkrepo-slim.tar.gz -p
