@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   新增加的共嗯那个
+
+### Changed
+
+-   一些简单的修改
+
 ## [v1.3.17-rc.1] - 2023-04-23
 
 ## [v1.3.16-rc.1] - 2023-04-23
@@ -84,37 +92,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.3.16-rc.1]: https://github.com/felixncheng/bk-repo/compare/v1.3.15-rc.3...v1.3.16-rc.1
 
 [v1.3.15-rc.3]: https://github.com/felixncheng/bk-repo/compare/v1.3.15-rc.2...v1.3.15-rc.3
-
-[v1.3.15-rc.2]: https://github.com/felixncheng/bk-repo/compare/1.3.15-rc.1...v1.3.15-rc.2
-
-[1.3.15-rc.1]: https://github.com/felixncheng/bk-repo/compare/v2.0.4-rc.4...1.3.15-rc.1
-
-[v2.0.4-rc.4]: https://github.com/felixncheng/bk-repo/compare/2.0.4-rc.3...v2.0.4-rc.4
-
-[2.0.4-rc.3]: https://github.com/felixncheng/bk-repo/compare/2.0.4-rc.2...2.0.4-rc.3
-
-[2.0.4-rc.2]: https://github.com/felixncheng/bk-repo/compare/2.0.4-rc.1...2.0.4-rc.2
-
-[2.0.4-rc.1]: https://github.com/felixncheng/bk-repo/compare/2.0.5...2.0.4-rc.1
-
-[2.0.5]: https://github.com/felixncheng/bk-repo/compare/2.0.4...2.0.5
-
-[2.0.4]: https://github.com/felixncheng/bk-repo/compare/1.0.4...2.0.4
-
-[1.0.4]: https://github.com/felixncheng/bk-repo/compare/1.0.3...1.0.4
-
-[1.0.3]: https://github.com/felixncheng/bk-repo/compare/1.0.1...1.0.3
-
-[1.0.1]: https://github.com/felixncheng/bk-repo/compare/1.0.0...1.0.1
-
-[1.0.0]: https://github.com/felixncheng/bk-repo/compare/1.3.0...1.0.0
-
-[1.3.0]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.2.1...1.3.0
-
-[1.2.1]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.2.0...1.2.1
-
-[1.2.0]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.1.0...1.2.0
-
-[1.1.0]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/1.0.0...1.1.0
-
-[1.0.0]: https://github.com/thomaseizinger/keep-a-changelog-new-release/compare/8f254ca247120d87500da53956ae6c0c9d9fae3e...1.0.0
