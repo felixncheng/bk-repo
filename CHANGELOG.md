@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.3.18-rc.1] - 2023-04-23
+
 ### Added
 
 -   新增加的共嗯那个
@@ -85,7 +87,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Initial release of this action!
 -
 
-[Unreleased]: https://github.com/felixncheng/bk-repo/compare/v1.3.17-rc.1...HEAD
+[Unreleased]: https://github.com/felixncheng/bk-repo/compare/v1.3.18-rc.1...HEAD
+
+[v1.3.18-rc.1]: https://github.com/felixncheng/bk-repo/compare/v1.3.17-rc.1...v1.3.18-rc.1
 
 [v1.3.17-rc.1]: https://github.com/felixncheng/bk-repo/compare/v1.3.16-rc.1...v1.3.17-rc.1
 
