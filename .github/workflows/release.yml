@@ -1,12 +1,41 @@
 
 name: Tag Release
 on:
-  push:
-    tags:
-      - "v*"
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
 
 jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    # only merged pull requests that begin with 'release-' or 'hotfix-' must trigger this job
+    if: github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.head.ref, 'release-') || startsWith(github.event.pull_request.head.ref, 'hotfix-'))
+    steps:
+      - name: Extract version from branch name (for release branches)
+        if: startsWith(github.event.pull_request.head.ref, 'release-')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release-}
+
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Extract version from branch name (for hotfix branches)
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix-')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix-}
+
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+      - name: Create git tag
+        run: git tag v${{ env.RELEASE_VERSION }}
+      - name: Push git tag
+        run: git push origin v${{ env.RELEASE_VERSION }}
   frontend:
+    needs: [create-tag]
     name: Build frontend
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +96,8 @@ jobs:
           name: bkrepo
           path: bkrepo-slim.tar.gz          
 
-  cloudNative:
+  cloud-native:
+    needs: [create-tag]
     name: Build image and helm chart
     runs-on: ubuntu-latest
     steps:
@@ -127,11 +157,11 @@ jobs:
           -r ${{ secrets.DOCKER_HOST }} --slim-package-path ../bkrepo-slim.tar.gz -p
           
 
-  releaseAll:
+  release-all:
     name: Release All
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [backend, cloudNative]
+    needs: [backend, cloud-native]
     steps:
       - name: Create Release
         id: create_release
