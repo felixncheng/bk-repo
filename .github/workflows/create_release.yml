@@ -16,8 +16,8 @@ jobs:
         run: git checkout -b release-${{ github.event.inputs.versionName }}
       - name: Initialize mandatory git config
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email noreply@github.com
+          git config user.name "BkRepo Project Bot"
+          git config user.email "bkrepo-project-bot@users.noreply.github.com"
       - name: Update Changelog
         uses: thomaseizinger/keep-a-changelog-new-release@v1
         with:
@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           head: release-${{ github.event.inputs.versionName }}
           base: master
-          title: Release version ${{ github.event.inputs.version }}
+          title: Release version ${{ github.event.inputs.versionName }}
           reviewers: ${{ github.actor }}
           body: |
             Hi @${{ github.actor }}!
