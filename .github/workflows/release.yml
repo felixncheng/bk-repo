@@ -1,57 +1,29 @@
 
 name: Tag Release
+
 on:
-  pull_request:
-    branches:
-      - master
-    types:
-      - closed
+  push:
+    tags:
+      - "v*"
 
 jobs:
-  create-tag:
+  prepare-release:
     runs-on: ubuntu-latest
-    # only merged pull requests that begin with 'release-' or 'hotfix-' must trigger this job
-    if: github.event.pull_request.merged == true &&
-      (startsWith(github.event.pull_request.head.ref, 'release-') || startsWith(github.event.pull_request.head.ref, 'hotfix-'))
-    outputs:
-      release_version:  ${{ steps.output-release-version.outputs.release_version }}
     steps:
-      - name: Extract version from branch name (for release branches)
-        if: startsWith(github.event.pull_request.head.ref, 'release-')
-        run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#release-}
-
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Extract version from branch name (for hotfix branches)
-        if: startsWith(github.event.pull_request.head.ref, 'hotfix-')
-        run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#hotfix-}
-
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
       - name: Initialize mandatory git config
         run: |
           git config user.name "BkRepo Project Bot"
           git config user.email "bkrepo-project-bot@users.noreply.github.com"
-      - name: Create git tag
-        run: git tag v${{ env.RELEASE_VERSION }}
-      - name: Push git tag
-        run: git push origin v${{ env.RELEASE_VERSION }}
-      - name: Output release version
-        id: output-release-version
-        run: echo "release_version=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+      - name: Create release branch
+        run: |
+          git push origin ${{ GITHUB_REF_NAME }}:release-${GITHUB_REF_NAME#v}
   frontend:
-    needs: [create-tag]
+    needs: prepare-release
     name: Build frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: v${{ needs.create-tag.outputs.release_version }}
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -75,13 +47,11 @@ jobs:
           path: src/frontend/frontend
 
   backend:
-    needs: [create-tag,frontend]
+    needs: [prepare-release,frontend]
     name: Build backend and release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: v${{ needs.create-tag.outputs.release_version }}
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -102,7 +72,7 @@ jobs:
       - name: Create artifact - Step2:make package
         id: create-artifact
         run: |
-          version="${{ needs.create-tag.outputs.release_version }})"
+          version="${GITHUB_REF_NAME#v}"
           ci_pkg_dir=/dev/shm/bkrepo ./scripts/packager-repo.sh "$version" bkrepo-slim.tar.gz
       - uses: actions/upload-artifact@v1
         with:
@@ -110,13 +80,11 @@ jobs:
           path: bkrepo-slim.tar.gz          
 
   cloud-native:
-    needs: [create-tag]
+    needs: prepare-release
     name: Build image and helm chart
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: v${{ needs.create-tag.outputs.release_version }}
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -130,7 +98,7 @@ jobs:
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
-          version="${{ needs.create-tag.outputs.release_version }}"
+          version="${GITHUB_REF_NAME#v}"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} -p
@@ -141,7 +109,7 @@ jobs:
       - name: Package Helm Chart -- CLOUD NATIVE
         working-directory: support-files/kubernetes/charts
         run: |
-          version="${{ needs.create-tag.outputs.release_version }}"
+          version="${GITHUB_REF_NAME#v}"
           ./build.sh --version $version --app-version $version
           mv bkrepo-$version.tgz bkrepo-charts.tgz
       - uses: actions/upload-artifact@v1
@@ -150,13 +118,11 @@ jobs:
           path: support-files/kubernetes/charts/bkrepo-charts.tgz
 
   quick-start:
-    needs: [create-tag,backend]
+    needs: [prepare-release,backend]
     name: Build all in one image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: v${{ needs.create-tag.outputs.release_version }}
       - name: download bkrepo
         uses: actions/download-artifact@v1
         id: download
@@ -168,7 +134,7 @@ jobs:
       - name: Create Docker Image
         working-directory: scripts
         run: |
-          version="${{ needs.create-tag.outputs.release_version }}"
+          version="${GITHUB_REF_NAME#v}"
           ./build-images.sh --all-in-one -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} --slim-package-path ../bkrepo-slim.tar.gz -p
@@ -178,7 +144,7 @@ jobs:
     name: Release All
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [create-tag, backend, cloud-native]
+    needs: [prepare-release, backend, cloud-native]
     steps:
       - name: Create Release
         id: create_release
@@ -186,8 +152,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ needs.create-tag.outputs.release_version }}
-          release_name: bk-repo v${{ needs.create-tag.outputs.release_version }}
+          tag_name: ${{ github.ref }}
+          release_name: bk-repo ${{ github.ref }}
           draft: true
           prerelease: true
       ## bkrepo
