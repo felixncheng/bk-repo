@@ -16,7 +16,9 @@ jobs:
           git config user.email "bkrepo-project-bot@users.noreply.github.com"
       - name: Create release branch
         run: |
-          git push origin ${{ GITHUB_REF_NAME }}:release-${GITHUB_REF_NAME#v}
+          echo ${GITHUB_REF#refs/*/}
+          echo ${GITHUB_REF_NAME}
+          git push origin ${GITHUB_REF_NAME}:release-${GITHUB_REF_NAME#v}
   frontend:
     needs: prepare-release
     name: Build frontend
