@@ -32,6 +32,7 @@ object Release {
 
 object Versions {
     const val DevopsBoot = "0.0.6"
+    const val DevopsBootReleasePlugin = "0.0.8-SNAPSHOT"
     const val Netty = "4.1.77.Final"
     const val SpringCloudCircuitbreaker = "2.1.2"
     const val Jersey = "2.35"

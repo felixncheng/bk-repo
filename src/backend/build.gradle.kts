@@ -32,12 +32,14 @@
 plugins {
     id("com.tencent.devops.boot") version Versions.DevopsBoot
     id("com.tencent.devops.publish") version Versions.DevopsBoot apply false
+    id("com.tencent.devops.release") version Versions.DevopsBootReleasePlugin
 }
+
+val projectVersion = file("version.txt").readText().trim()
 
 allprojects {
     group = Release.Group
-    version = (System.getProperty("repo_version") ?: Release.Version) +
-            if (System.getProperty("snapshot") == "true") "-SNAPSHOT" else "-RELEASE"
+    version = projectVersion
 
     repositories {
         maven(url = "https://repo.spring.io/milestone")
@@ -109,6 +111,11 @@ allprojects {
             dependsOn(tasks.named("bootJar"))
         }
     }
+}
+
+release {
+    scmUrl.set("scm:git:git@github.com:TencentBlueKing/bk-repo.git")
+    incrementPolicy.set("PATCH")
 }
 
 fun isBootProject(project: Project): Boolean {

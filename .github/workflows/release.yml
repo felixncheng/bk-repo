@@ -1,13 +1,22 @@
 
 name: Tag Release
+
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Release version (ie 1.1.0)"
+      next_version:
+        description: "Next development version (ie 1.2.0)"
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.release_version }}
+      DEVELOPMENT_VERSION: ${{ github.event.inputs.next_version }}
+    outputs:
+      VERSION:  ${{ steps.output-release-version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - name: Initialize mandatory git config
@@ -18,12 +27,30 @@ jobs:
         run: |
           git checkout -b release-${GITHUB_REF_NAME#v}
           git push origin release-${GITHUB_REF_NAME#v}
+      - name: Prepare release with Gradle
+        run: |
+          ./gradlew preview > release.txt
+          ./gradlew release
+      - name: Checkout tag
+        run: .github/scripts/release_checkout_tag release.txt
+      - name: Output release version
+        id: output-release-version
+        run: echo "version=$(cat src/backend/version.txt)" >> $GITHUB_OUTPUT
+      - name: Upload workspace
+        uses: actions/upload-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ${{ github.workspace }}/**
   frontend:
     needs: prepare-release
     name: Build frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Download release-workspace
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ./prepare-release-workspace/
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -51,7 +78,11 @@ jobs:
     name: Build backend and release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Download release-workspace
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ./prepare-release-workspace/
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -72,7 +103,7 @@ jobs:
       - name: Create artifact - Step2:make package
         id: create-artifact
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="${{ needs.prepare-release.outputs.VERSION }})"
           ci_pkg_dir=/dev/shm/bkrepo ./scripts/packager-repo.sh "$version" bkrepo-slim.tar.gz
       - uses: actions/upload-artifact@v1
         with:
@@ -84,7 +115,11 @@ jobs:
     name: Build image and helm chart
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Download release-workspace
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ./prepare-release-workspace/
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -98,7 +133,7 @@ jobs:
       - name: Create Docker Image -- CLOUD NATIVE
         working-directory: scripts
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="${{ needs.prepare-release.outputs.VERSION }})"
           ./build-images.sh  -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} -p
@@ -109,7 +144,7 @@ jobs:
       - name: Package Helm Chart -- CLOUD NATIVE
         working-directory: support-files/kubernetes/charts
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="${{ needs.prepare-release.outputs.VERSION }})"
           ./build.sh --version $version --app-version $version
           mv bkrepo-$version.tgz bkrepo-charts.tgz
       - uses: actions/upload-artifact@v1
@@ -122,7 +157,11 @@ jobs:
     name: Build all in one image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Download release-workspace
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ./prepare-release-workspace/
       - name: download bkrepo
         uses: actions/download-artifact@v1
         id: download
@@ -134,7 +173,7 @@ jobs:
       - name: Create Docker Image
         working-directory: scripts
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="${{ needs.prepare-release.outputs.VERSION }})"
           ./build-images.sh --all-in-one -v $version --username ${{ secrets.DOCKER_USER }} \
           --password ${{ secrets.DOCKER_PASS }} -n ${{ secrets.DOCKER_NAMESPACE }} \
           -r ${{ secrets.DOCKER_HOST }} --slim-package-path ../bkrepo-slim.tar.gz -p
@@ -186,3 +225,36 @@ jobs:
           asset_path: ./bkrepo-charts.tgz
           asset_name: bkrepo-charts.tgz
           asset_content_type: application/gzip
+  deploy-release:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release-workspace
+        uses: actions/download-artifact@v3
+        with:
+          name: prepare-release-workspace
+          path: ./prepare-release-workspace/
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Gradle Build
+        working-directory: src/backend
+        env:
+          MAVEN_REPO_DEPLOY_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          ./gradlew publishAllPublicationsToAllJarRepository \
+          -PallJarRepo=${MAVEN_REPO_DEPLOY_URL} \
+          -PallJarUsername=${SONATYPE_USERNAME} \
+          -PallJarPassword=${SONATYPE_PASSWORD}
