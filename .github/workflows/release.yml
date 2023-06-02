@@ -23,10 +23,6 @@ jobs:
         run: |
           git config user.name "bkci-bot"
           git config user.email "64278246+bkci-bot@users.noreply.github.com"
-      - name: Create release branch
-        run: |
-          git checkout -b release-${GITHUB_REF_NAME#v}
-          git push origin release-${GITHUB_REF_NAME#v}
       - name: Prepare release with Gradle
         working-directory: src/backend
         run: |
@@ -37,6 +33,8 @@ jobs:
       - name: Output release version
         id: output-release-version
         run: echo "version=$(cat src/backend/version.txt)" >> $GITHUB_OUTPUT
+      - name: Create release branch
+        run: git push origin release-${{ steps.output-release-version.outputs.version }}
       - name: Upload workspace
         uses: actions/upload-artifact@v3
         with:
