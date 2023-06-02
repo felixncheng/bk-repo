@@ -1,5 +1,5 @@
 
-name: Tag Release
+name: Release
 
 on:
   workflow_dispatch:
@@ -28,8 +28,9 @@ jobs:
           git checkout -b release-${GITHUB_REF_NAME#v}
           git push origin release-${GITHUB_REF_NAME#v}
       - name: Prepare release with Gradle
+        working-directory: src/backend
         run: |
-          ./gradlew preview > release.txt
+          ./gradlew -q preview > release.txt
           ./gradlew release
       - name: Checkout tag
         run: .github/scripts/release_checkout_tag release.txt
