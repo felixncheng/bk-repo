@@ -26,10 +26,10 @@ jobs:
       - name: Prepare release with Gradle
         working-directory: src/backend
         run: |
-          ./gradlew -q preview > release.txt
+          ./gradlew generateReleaseProperties
           ./gradlew release
       - name: Checkout tag
-        run: .github/scripts/release_checkout_tag release.txt
+        run: .github/scripts/release_checkout_tag release.properties
       - name: Output release version
         id: output-release-version
         run: echo "version=$(cat src/backend/version.txt)" >> $GITHUB_OUTPUT

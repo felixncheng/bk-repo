@@ -28,11 +28,11 @@
 set -e
 
 if [ "$#" -ne 1 ]; then
-    echo "Expected release.txt file"
+    echo "Expected release.properties file"
     exit 1
 fi
 
-TAG=$(grep "Tag Name:" release.txt | awk '{print $3}')
+TAG=$(grep "tag.name=" "$1" | cut -d'=' -f2)
 
 echo "Checkout tag $TAG"
 git checkout "$TAG"
