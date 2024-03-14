@@ -1,6 +1,8 @@
 package com.tencent.bkrepo.archive.model
 
 import com.tencent.bkrepo.archive.CompressStatus
+import com.tencent.bkrepo.archive.model.TCompressFile.Companion.BASE_SHA256_IDX
+import com.tencent.bkrepo.archive.model.TCompressFile.Companion.BASE_SHA256_IDX_DEF
 import com.tencent.bkrepo.archive.model.TCompressFile.Companion.SHA256_IDX
 import com.tencent.bkrepo.archive.model.TCompressFile.Companion.SHA256_IDX_DEF
 import com.tencent.bkrepo.archive.model.TCompressFile.Companion.STATUS_IDX
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document("compress_file")
 @CompoundIndexes(
     CompoundIndex(name = SHA256_IDX, def = SHA256_IDX_DEF, unique = true, background = true),
+    CompoundIndex(name = BASE_SHA256_IDX, def = BASE_SHA256_IDX_DEF, background = true),
     CompoundIndex(name = STATUS_IDX, def = STATUS_IDX_DEF, background = true),
 )
 @Suppress("LongParameterList")
@@ -40,6 +43,8 @@ class TCompressFile(
     companion object {
         const val SHA256_IDX = "sha256_storageCredentialsKey_idx"
         const val SHA256_IDX_DEF = "{'sha256': 1,'storageCredentialsKey': 1}"
+        const val BASE_SHA256_IDX = "baseSha256_storageCredentialsKey_idx"
+        const val BASE_SHA256_IDX_DEF = "{'baseSha256': 1,'storageCredentialsKey': 1}"
         const val STATUS_IDX = "status_idx"
         const val STATUS_IDX_DEF = "{'status': 1}"
     }
