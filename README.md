@@ -10,7 +10,7 @@
 > **重要提示**: `master` 分支在开发过程中可能处于 *不稳定或者不可用状态* 。
 请通过[releases](https://github.com/TencentBlueKing/bk-repo/releases) 而非 `master` 去获取稳定的二进制文件。
 
-bk-repo是一个基于微服务架构设计的制品管理平台
+bk-repo是一个基于微服务架构设计的制品管理平台1
 - 架构层面使用spring boot+ spring cloud的技术栈，是一个kotlin作为主要的开发语言的gradle工程，微服务网关基于openresty。
 - 功能层面提供各种类型的制品存储协议、制品代理、分发、晋级、扫描、包管理等。
 - 存储层面制品库采用多级分层的策略去接收制品文件，使用对象存储去永久的存储制品文件，使用mongodb去存储节点信息与元数据信息，对外提供高于4个9的可用性。
